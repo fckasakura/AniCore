@@ -24,13 +24,14 @@
     position: relative;
     width: 140px;
     flex-shrink: 0;
-    transition: all 0.3s;
-    border: 2px solid transparent;
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.3s;
   }
   .card:hover {
-    transform: scale(1.05);
-    border-color: #ff69b4;
-    box-shadow: 0 0 10px rgba(255, 105, 180, 0.5);
+    transform: translateY(-3px);
   }
   .card img {
     width: 100%;
@@ -39,35 +40,39 @@
   }
   .age {
     position: absolute;
-    top: 5px;
-    left: 5px;
-    background: #ff69b4;
-    color: #1a1a1a;
-    padding: 3px 6px;
-    font-size: 12px;
+    top: 8px;
+    left: 8px;
+    background: #42a5f5;
+    color: #ffffff;
+    padding: 2px 5px;
+    font-size: 11px;
+    border-radius: 5px;
   }
   .rating {
     position: absolute;
-    top: 5px;
-    right: 5px;
-    background: #8a2be2;
-    color: #fff;
-    padding: 3px 6px;
-    font-size: 12px;
+    top: 8px;
+    right: 8px;
+    background: #e0e0e0;
+    color: #616161;
+    padding: 2px 5px;
+    font-size: 11px;
+    border-radius: 5px;
   }
   .title {
     text-align: center;
     margin: 5px 0;
-    font-weight: bold;
-    color: #fff;
-    text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+    font-weight: 600;
+    color: #616161;
+    font-size: 13px;
   }
   .info {
     position: absolute;
     bottom: 0;
-    background: rgba(26, 26, 26, 0.9);
-    color: #ff69b4;
+    background: rgba(255, 255, 255, 0.95);
+    color: #616161;
     width: 100%;
     padding: 5px;
+    font-size: 12px;
+    border-radius: 0 0 10px 10px;
   }
   </style>

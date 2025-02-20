@@ -16,10 +16,9 @@
 
 <style>
 #app {
-  font-family: Arial, sans-serif;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0;
+  font-family: 'Open Sans', sans-serif;
+  background: #f5f5f5;
+  min-height: 100vh;
 }
 body {
   margin: 0;
@@ -28,38 +27,41 @@ header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px;
-  background-color: #2c3e50;
-  color: white;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  padding: 15px 20px;
+  background: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
 }
 .site-title {
-  font-size: 28px;
+  font-size: 24px;
+  color: #42a5f5;
   margin: 0;
 }
 .search-bar {
   padding: 8px;
   width: 300px;
-  border: none;
-  border-radius: 20px;
-  background-color: #34495e;
-  color: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 15px;
+  background: #ffffff;
+  color: #616161;
+  font-size: 14px;
 }
 .search-bar::placeholder {
-  color: #bdc3c7;
+  color: #bdbdbd;
 }
 .profile-icon {
-  font-size: 24px;
+  font-size: 22px;
+  color: #42a5f5;
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: color 0.3s;
 }
 .profile-icon:hover {
-  transform: scale(1.1);
+  color: #1976d2;
 }
 footer {
   padding: 20px;
   text-align: center;
-  background-color: #ecf0f1;
-  margin-top: 40px;
+  background: #ffffff;
+  color: #616161;
+  border-top: 1px solid #e0e0e0;
 }
 </style>

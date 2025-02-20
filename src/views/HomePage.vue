@@ -5,6 +5,29 @@
       <h2>Весенний сезон аниме 2025</h2>
     </section>
 
+    <section class="filters">
+      <select v-model="selectedGenre">
+        <option value="">Все жанры</option>
+        <option value="action">Экшен</option>
+        <option value="romance">Романтика</option>
+        <option value="fantasy">Фэнтези</option>
+        <option value="comedy">Комедия</option>
+      </select>
+      <select v-model="selectedYear">
+        <option value="">Все годы</option>
+        <option value="2025">2025</option>
+        <option value="2024">2024</option>
+        <option value="2023">2023</option>
+      </select>
+      <select v-model="selectedRating">
+        <option value="">Любой рейтинг</option>
+        <option value="8+">8+</option>
+        <option value="7+">7+</option>
+        <option value="6+">6+</option>
+      </select>
+      <button class="filter-btn">Применить</button>
+    </section>
+
     <section class="anime-blocks">
       <div class="block">
         <h3>Новые аниме</h3>
@@ -28,15 +51,18 @@
         <div class="collection">Спортивные</div>
         <div class="collection">Боевики</div>
         <div class="collection">Медики</div>
+        <div class="collection">Романтика</div>
+        <div class="collection">Фэнтези</div>
+        <div class="collection">Комедии</div>
       </div>
     </section>
 
     <section class="about">
       <h3>О сайте</h3>
       <div class="about-content">
-        <p>Часть 1: Это сайт про аниме.</p>
-        <p>Часть 2: Тут можно смотреть и искать.</p>
-        <p>Часть 3: Надеюсь, вам понравится!</p>
+        <p>Этот сайт — мой дипломный проект, созданный для удобного поиска и просмотра аниме. Здесь вы найдёте новинки, популярные тайтлы и тематические коллекции, чтобы легко выбрать, что посмотреть.</p>
+        <p>Все данные собраны вручную или через открытые API. Функционал включает фильтры по жанрам, годам и рейтингам, а также возможность отмечать просмотренное в профиле. Никакой коммерции — только любовь к аниме!</p>
+        <p>Если у вас есть предложения или вы заметили ошибку, пишите на почту. Планирую добавить больше функций, вроде рекомендаций и отзывов, так что следите за обновлениями!</p>
       </div>
     </section>
   </div>
@@ -46,114 +72,142 @@
 import AnimeCard from '@/components/AnimeCard.vue';
 
 export default {
-  components: { AnimeCard }
+  components: { AnimeCard },
+  data() {
+    return {
+      selectedGenre: '',
+      selectedYear: '',
+      selectedRating: ''
+    };
+  }
 };
 </script>
 
 <style scoped>
 .home {
-  padding: 20px;
-  background: #1a1a1a url('https://www.transparenttextures.com/patterns/dark-mosaic.png'); /* Тёмный фон с паттерном */
-  color: #fff;
-  font-family: 'Roboto Condensed', sans-serif;
+  padding: 0;
+  background: #f5f5f5;
+  color: #616161;
 }
-
-/* Баннер */
 .banner {
   position: relative;
   text-align: center;
-  overflow: hidden;
+  background: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
 }
 .banner img {
   width: 100%;
-  height: 350px;
+  height: 250px;
   object-fit: cover;
-  filter: brightness(80%);
-  border-bottom: 2px solid #ff69b4;
 }
 .banner h2 {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 40px;
-  background: linear-gradient(45deg, #ff69b4, #8a2be2);
-  -webkit-background-clip: text;
-  color: transparent;
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  text-shadow: 0 0 10px rgba(255, 105, 180, 0.7);
+  font-size: 28px;
+  color: #42a5f5;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 8px 16px;
+  border-radius: 10px;
 }
-
-/* Блоки аниме */
+.filters {
+  display: flex;
+  gap: 15px;
+  padding: 20px;
+  background: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+}
+.filters select {
+  padding: 8px;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #616161;
+  font-size: 14px;
+}
+.filter-btn {
+  padding: 8px 16px;
+  background: #42a5f5;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.filter-btn:hover {
+  background: #1976d2;
+}
 .anime-blocks {
   display: flex;
   justify-content: space-between;
-  margin: 40px 0;
+  padding: 20px;
 }
 .block {
-  width: 48%;
+  width: 49%;
 }
 .block h3 {
-  color: #ff69b4;
-  font-size: 24px;
-  text-transform: uppercase;
+  color: #42a5f5;
+  font-size: 20px;
+  margin-bottom: 10px;
 }
 .card-list {
   display: flex;
   overflow-x: auto;
-  gap: 15px;
+  gap: 10px;
 }
-
-/* Кнопка */
 .all-anime-btn {
   display: block;
   margin: 20px auto;
-  padding: 12px 30px;
-  background: linear-gradient(45deg, #ff69b4, #8a2be2);
-  color: white;
+  padding: 10px 25px;
+  background: #42a5f5;
+  color: #ffffff;
   border: none;
-  border-radius: 0;
-  font-size: 18px;
+  border-radius: 15px;
+  font-size: 14px;
   cursor: pointer;
-  transition: transform 0.3s, box-shadow 0.3s;
+  transition: background 0.3s;
 }
 .all-anime-btn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 15px rgba(255, 105, 180, 0.7);
+  background: #1976d2;
 }
-
-/* Коллекции */
+.collections {
+  padding: 20px;
+}
 .collections h3 {
-  color: #8a2be2;
+  color: #42a5f5;
+  font-size: 20px;
   text-align: center;
-  font-size: 24px;
+  margin-bottom: 15px;
 }
 .collection-list {
   display: flex;
-  justify-content: space-around;
-  margin: 20px 0;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px;
 }
 .collection {
-  padding: 15px 25px;
-  background: #2c2c2c;
-  color: #ff69b4;
-  border: 1px solid #8a2be2;
-  border-radius: 0;
+  flex: 1 1 calc(16% - 10px);
+  padding: 10px;
+  background: #ffffff;
+  color: #616161;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  text-align: center;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: background 0.3s;
 }
 .collection:hover {
-  background: #ff69b4;
-  color: #1a1a1a;
-  border-color: #ff69b4;
+  background: #e0e0e0;
 }
-
-/* О сайте */
+.about {
+  padding: 20px;
+}
 .about h3 {
-  color: #ff69b4;
+  color: #42a5f5;
+  font-size: 20px;
   text-align: center;
-  font-size: 24px;
+  margin-bottom: 15px;
 }
 .about-content {
   display: flex;
@@ -161,10 +215,12 @@ export default {
   gap: 20px;
 }
 .about-content p {
-  width: 30%;
-  background: #2c2c2c;
+  flex: 1;
+  background: #ffffff;
   padding: 15px;
-  border: 1px solid #8a2be2;
-  color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  color: #616161;
+  font-size: 14px;
 }
 </style>
