@@ -2,7 +2,7 @@
   <div id="app">
     <header>
       <h1 class="site-title">AniCore</h1>
-      <input type="text" placeholder="Поиск аниме..." class="search-bar" />
+      <input type="text" placeholder="Поиск..." class="search-bar" />
       <div class="profile-icon">👤</div>
     </header>
     <main>
@@ -16,8 +16,9 @@
 
 <style>
 #app {
-  font-family: 'Open Sans', sans-serif;
-  background: #f5f5f5;
+  font-family: 'Montserrat', sans-serif;
+  background: #171717;
+  color: #ffffff;
   min-height: 100vh;
 }
 body {
@@ -28,40 +29,60 @@ header {
   align-items: center;
   justify-content: space-between;
   padding: 15px 20px;
-  background: #ffffff;
-  border-bottom: 1px solid #e0e0e0;
+  background: #212121;
+  border-bottom: 1px solid #e50914;
 }
 .site-title {
   font-size: 24px;
-  color: #42a5f5;
+  color: #e50914;
   margin: 0;
 }
 .search-bar {
-  padding: 8px;
+  padding: 8px 15px;
   width: 300px;
-  border: 1px solid #e0e0e0;
-  border-radius: 15px;
-  background: #ffffff;
-  color: #616161;
+  border: 1px solid #424242;
+  border-radius: 20px;
+  background: #2c2c2c;
+  color: #ffffff;
   font-size: 14px;
 }
 .search-bar::placeholder {
-  color: #bdbdbd;
+  color: #757575;
 }
 .profile-icon {
-  font-size: 22px;
-  color: #42a5f5;
+  font-size: 24px;
+  color: #e50914;
   cursor: pointer;
   transition: color 0.3s;
 }
 .profile-icon:hover {
-  color: #1976d2;
+  color: #ffffff;
 }
 footer {
   padding: 20px;
   text-align: center;
-  background: #ffffff;
-  color: #616161;
-  border-top: 1px solid #e0e0e0;
+  background: #212121;
+  color: #757575;
+  border-top: 1px solid #e50914;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  header {
+    flex-direction: column;
+    padding: 10px;
+  }
+  .search-bar {
+    width: 100%;
+    margin: 10px 0;
+  }
+}
+@media (max-width: 480px) {
+  .site-title {
+    font-size: 20px;
+  }
+  .profile-icon {
+    font-size: 20px;
+  }
 }
 </style>

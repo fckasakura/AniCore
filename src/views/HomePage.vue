@@ -7,25 +7,33 @@
 
     <section class="filters">
       <select v-model="selectedGenre">
-        <option value="">Все жанры</option>
+        <option value="">Жанр</option>
         <option value="action">Экшен</option>
         <option value="romance">Романтика</option>
         <option value="fantasy">Фэнтези</option>
         <option value="comedy">Комедия</option>
+        <option value="drama">Драма</option>
       </select>
       <select v-model="selectedYear">
-        <option value="">Все годы</option>
+        <option value="">Год</option>
         <option value="2025">2025</option>
         <option value="2024">2024</option>
         <option value="2023">2023</option>
+        <option value="2022">2022</option>
       </select>
       <select v-model="selectedRating">
-        <option value="">Любой рейтинг</option>
+        <option value="">Рейтинг</option>
+        <option value="9+">9+</option>
         <option value="8+">8+</option>
         <option value="7+">7+</option>
         <option value="6+">6+</option>
       </select>
-      <button class="filter-btn">Применить</button>
+      <select v-model="selectedStatus">
+        <option value="">Статус</option>
+        <option value="ongoing">Онгоинг</option>
+        <option value="completed">Завершён</option>
+      </select>
+      <button class="filter-btn">Фильтр</button>
     </section>
 
     <section class="anime-blocks">
@@ -54,6 +62,7 @@
         <div class="collection">Романтика</div>
         <div class="collection">Фэнтези</div>
         <div class="collection">Комедии</div>
+        <div class="collection">Драма</div>
       </div>
     </section>
 
@@ -77,7 +86,8 @@ export default {
     return {
       selectedGenre: '',
       selectedYear: '',
-      selectedRating: ''
+      selectedRating: '',
+      selectedStatus: ''
     };
   }
 };
@@ -86,49 +96,48 @@ export default {
 <style scoped>
 .home {
   padding: 0;
-  background: #f5f5f5;
-  color: #616161;
+  background: #171717;
+  color: #ffffff;
 }
 .banner {
   position: relative;
   text-align: center;
-  background: #ffffff;
-  border-bottom: 1px solid #e0e0e0;
 }
 .banner img {
   width: 100%;
-  height: 250px;
+  height: 300px;
   object-fit: cover;
+  filter: brightness(70%);
 }
 .banner h2 {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 28px;
-  color: #42a5f5;
-  background: rgba(255, 255, 255, 0.85);
-  padding: 8px 16px;
+  font-size: 32px;
+  color: #ffffff;
+  background: rgba(23, 23, 23, 0.7);
+  padding: 10px 20px;
   border-radius: 10px;
 }
 .filters {
   display: flex;
-  gap: 15px;
-  padding: 20px;
-  background: #ffffff;
-  border-bottom: 1px solid #e0e0e0;
+  gap: 10px;
+  padding: 15px 20px;
+  background: #212121;
+  border-bottom: 1px solid #424242;
 }
 .filters select {
   padding: 8px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid #424242;
   border-radius: 10px;
-  background: #ffffff;
-  color: #616161;
+  background: #2c2c2c;
+  color: #ffffff;
   font-size: 14px;
 }
 .filter-btn {
-  padding: 8px 16px;
-  background: #42a5f5;
+  padding: 8px 15px;
+  background: #e50914;
   color: #ffffff;
   border: none;
   border-radius: 10px;
@@ -136,18 +145,19 @@ export default {
   transition: background 0.3s;
 }
 .filter-btn:hover {
-  background: #1976d2;
+  background: #b2070f;
 }
 .anime-blocks {
   display: flex;
   justify-content: space-between;
   padding: 20px;
+  gap: 20px;
 }
 .block {
-  width: 49%;
+  width: 50%;
 }
 .block h3 {
-  color: #42a5f5;
+  color: #e50914;
   font-size: 20px;
   margin-bottom: 10px;
 }
@@ -159,8 +169,8 @@ export default {
 .all-anime-btn {
   display: block;
   margin: 20px auto;
-  padding: 10px 25px;
-  background: #42a5f5;
+  padding: 10px 20px;
+  background: #e50914;
   color: #ffffff;
   border: none;
   border-radius: 15px;
@@ -169,13 +179,13 @@ export default {
   transition: background 0.3s;
 }
 .all-anime-btn:hover {
-  background: #1976d2;
+  background: #b2070f;
 }
 .collections {
   padding: 20px;
 }
 .collections h3 {
-  color: #42a5f5;
+  color: #e50914;
   font-size: 20px;
   text-align: center;
   margin-bottom: 15px;
@@ -183,44 +193,88 @@ export default {
 .collection-list {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
   gap: 10px;
+  justify-content: space-between;
 }
 .collection {
-  flex: 1 1 calc(16% - 10px);
+  flex: 1 1 calc(14% - 10px);
   padding: 10px;
-  background: #ffffff;
-  color: #616161;
-  border: 1px solid #e0e0e0;
+  background: #212121;
+  border: 1px solid #424242;
   border-radius: 10px;
   text-align: center;
   cursor: pointer;
   transition: background 0.3s;
 }
 .collection:hover {
-  background: #e0e0e0;
+  background: #e50914;
 }
 .about {
   padding: 20px;
 }
 .about h3 {
-  color: #42a5f5;
+  color: #e50914;
   font-size: 20px;
   text-align: center;
   margin-bottom: 15px;
 }
 .about-content {
   display: flex;
-  justify-content: space-between;
   gap: 20px;
+  justify-content: space-between;
 }
 .about-content p {
   flex: 1;
-  background: #ffffff;
+  background: #212121;
   padding: 15px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid #424242;
   border-radius: 10px;
-  color: #616161;
   font-size: 14px;
+}
+
+/* Адаптивность */
+@media (max-width: 1024px) {
+  .anime-blocks {
+    flex-direction: column;
+  }
+  .block {
+    width: 100%;
+  }
+  .collection {
+    flex: 1 1 calc(33% - 10px);
+  }
+}
+@media (max-width: 768px) {
+  .filters {
+    flex-direction: column;
+    padding: 10px;
+  }
+  .filters select, .filter-btn {
+    width: 100%;
+  }
+  .banner h2 {
+    font-size: 24px;
+  }
+  .collection {
+    flex: 1 1 calc(50% - 10px);
+  }
+  .about-content {
+    flex-direction: column;
+  }
+}
+@media (max-width: 480px) {
+  .banner img {
+    height: 200px;
+  }
+  .banner h2 {
+    font-size: 18px;
+    padding: 5px 10px;
+  }
+  .block h3 {
+    font-size: 18px;
+  }
+  .collection {
+    flex: 1 1 100%;
+  }
 }
 </style>
