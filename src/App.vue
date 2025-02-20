@@ -20,7 +20,6 @@
   background: #171717;
   color: #ffffff;
   min-height: 100vh;
-  padding: 0 20px; /* Отступы слева и справа */
 }
 body {
   margin: 0;
@@ -29,7 +28,7 @@ header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 15px 0; /* Убраны боковые отступы, теперь от родителя */
+  padding: 15px 20px;
   background: #212121;
   border-bottom: 1px solid #e50914;
 }
@@ -60,7 +59,7 @@ header {
   color: #ffffff;
 }
 footer {
-  padding: 20px 0; /* Убраны боковые отступы */
+  padding: 20px;
   text-align: center;
   background: #212121;
   color: #757575;
@@ -69,12 +68,9 @@ footer {
 
 /* Адаптивность */
 @media (max-width: 768px) {
-  #app {
-    padding: 0 10px; /* Уменьшаем отступы на планшетах */
-  }
   header {
     flex-direction: column;
-    padding: 10px 0;
+    padding: 10px;
   }
   .search-bar {
     width: 100%;
@@ -82,9 +78,6 @@ footer {
   }
 }
 @media (max-width: 480px) {
-  #app {
-    padding: 0 5px; /* Ещё меньше на телефонах */
-  }
   .site-title {
     font-size: 20px;
   }
