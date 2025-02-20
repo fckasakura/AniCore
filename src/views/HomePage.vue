@@ -95,7 +95,6 @@ export default {
 
 <style scoped>
 .home {
-  padding: 0;
   background: #171717;
   color: #ffffff;
 }
@@ -123,7 +122,7 @@ export default {
 .filters {
   display: flex;
   gap: 10px;
-  padding: 15px 20px;
+  padding: 15px 0; /* Отступы от родителя */
   background: #212121;
   border-bottom: 1px solid #424242;
 }
@@ -150,7 +149,7 @@ export default {
 .anime-blocks {
   display: flex;
   justify-content: space-between;
-  padding: 20px;
+  padding: 20px 0; /* Отступы от родителя */
   gap: 20px;
 }
 .block {
@@ -182,7 +181,7 @@ export default {
   background: #b2070f;
 }
 .collections {
-  padding: 20px;
+  padding: 20px 0; /* Отступы от родителя */
 }
 .collections h3 {
   color: #e50914;
@@ -210,7 +209,7 @@ export default {
   background: #e50914;
 }
 .about {
-  padding: 20px;
+  padding: 20px 0; /* Отступы от родителя */
 }
 .about h3 {
   color: #e50914;
@@ -247,7 +246,7 @@ export default {
 @media (max-width: 768px) {
   .filters {
     flex-direction: column;
-    padding: 10px;
+    padding: 10px 0;
   }
   .filters select, .filter-btn {
     width: 100%;
