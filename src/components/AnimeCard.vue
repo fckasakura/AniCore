@@ -1,18 +1,24 @@
 <template>
   <div class="card" @mouseover="showInfo = true" @mouseleave="showInfo = false">
-    <img src="https://cdn.myanimelist.net/images/anime/1208/94706.jpg" alt="Anime Poster" />
-    <span class="age">16+</span>
-    <span class="rating">8.7</span>
-    <p class="title">Атака титанов</p>
+    <img :src="anime.image" :alt="anime.title" loading="lazy" />
+    <span class="age">{{ anime.age || '16+' }}</span>
+    <span class="rating">{{ anime.rating }}</span>
+    <p class="title">{{ anime.title }}</p>
     <div v-if="showInfo" class="info">
-      <p>Жанр: Экшен, Драма</p>
-      <p>Серии: 25</p>
+      <p>Жанр: {{ anime.genres.join(', ') }}</p>
+      <p>Серии: {{ anime.episodes || 25 }}</p>
     </div>
   </div>
 </template>
 
 <script>
 export default {
+  props: {
+    anime: {
+      type: Object,
+      required: true
+    }
+  },
   data() {
     return { showInfo: false };
   }
