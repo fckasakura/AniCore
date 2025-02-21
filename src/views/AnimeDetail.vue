@@ -1,5 +1,5 @@
 <template>
-    <div class="anime-detail">
+    <div class="anime-detail" :style="{ backgroundImage: `url(${anime.backgroundImage})` }">
       <div class="container" v-if="anime && Object.keys(anime).length">
         <h2>{{ anime.title }}</h2>
         <div class="content">
@@ -7,12 +7,21 @@
             <img :src="anime.image" :alt="anime.title" loading="lazy" />
           </div>
           <div class="info">
-            <p><strong>Рейтинг:</strong> {{ anime.rating }}</p>
+            <p><strong>Рейтинг:</strong> {{ anime.rating }} (MAL: {{ anime.ratings?.MAL || 'N/A' }})</p>
             <p><strong>Возраст:</strong> {{ anime.ageRestriction }}</p>
             <p><strong>Эпизоды:</strong> {{ anime.episodes }}</p>
             <p><strong>Жанры:</strong> {{ anime.genres ? anime.genres.join(', ') : 'Не указаны' }}</p>
             <p><strong>Статус:</strong> {{ anime.status === 'ongoing' ? 'Онгоинг' : 'Завершён' }}</p>
+            <p><strong>Дата выхода:</strong> {{ anime.releaseDate }}</p>
+            <p><strong>Студия:</strong> {{ anime.studio }}</p>
+            <p><strong>Длительность:</strong> {{ anime.duration }}</p>
+            <p><strong>Источник:</strong> {{ anime.source }}</p>
+            <p><strong>Сезон:</strong> {{ anime.season }}</p>
+            <p><strong>Теги:</strong> {{ anime.tags ? anime.tags.join(', ') : 'Нет' }}</p>
+            <p><strong>Режиссёр:</strong> {{ anime.director }}</p>
             <p><strong>Описание:</strong> {{ anime.description }}</p>
+            <p><strong>Сэйю:</strong> {{ anime.voiceActors ? anime.voiceActors.map(va => `${va.character} (${va.actor})`).join(', ') : 'Не указаны' }}</p>
+            <a v-if="anime.trailer" :href="anime.trailer" target="_blank" class="trailer-btn">Трейлер</a>
           </div>
         </div>
         <div class="player-section">
@@ -24,7 +33,7 @@
               @click="selectedEpisode = ep.videoLink" 
               :class="{ active: selectedEpisode === ep.videoLink }"
             >
-              Серия {{ ep.episode }}
+              Серия {{ ep.episode }}: {{ ep.title || '' }}
             </button>
           </div>
           <div class="player">
@@ -58,7 +67,7 @@
           const id = this.$route.params.id;
           const response = await axios.get(`https://8fa4112ec6cc62ee.mokky.dev/Anime/${id}`);
           this.anime = response.data;
-          this.selectedEpisode = this.anime.episodesList ? this.anime.episodesList[0].videoLink : null; // Первая серия по умолчанию
+          this.selectedEpisode = this.anime.episodesList ? this.anime.episodesList[0].videoLink : null;
         } catch (error) {
           console.error('Ошибка загрузки аниме:', error);
           this.$router.push('/');
@@ -74,6 +83,8 @@
   <style scoped>
   .anime-detail {
     background: #171717;
+    background-size: cover;
+    background-position: center;
     color: #ffffff;
     padding: 20px 0;
   }
@@ -81,6 +92,9 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
+    background: rgba(23, 23, 23, 0.8);
+    padding: 20px;
+    border-radius: 10px;
   }
   h2 {
     color: #e50914;
@@ -106,6 +120,18 @@
   }
   .info strong {
     color: #e50914;
+  }
+  .trailer-btn {
+    display: inline-block;
+    padding: 8px 15px;
+    background: #e50914;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 10px;
+    transition: background 0.3s;
+  }
+  .trailer-btn:hover {
+    background: #b2070f;
   }
   .player-section {
     margin-top: 20px;

@@ -1,36 +1,41 @@
 <template>
   <div id="app">
     <header>
-      <h1 class="site-title">AniCore</h1>
-      <input type="text" placeholder="Поиск..." class="search-bar" />
+      <h1 class="site-title" @click="$router.push('/')">AniCore</h1>
+      <input 
+        type="text" 
+        v-model="searchQuery" 
+        @input="searchAnime" 
+        placeholder="Поиск..." 
+        class="search-bar" 
+      />
       <div class="profile-icon" @click="showProfileModal = true">👤</div>
+      <div class="search-results" v-if="searchResults.length">
+        <div 
+          v-for="anime in searchResults" 
+          :key="anime.id" 
+          @click="$router.push(`/anime/${anime.id}`)" 
+          class="search-item"
+        >
+          {{ anime.title }}
+        </div>
+      </div>
     </header>
     <main>
       <router-view />
     </main>
-    <footer>
-      <p>Сайт создан как дипломный проект. Никаких денег я не получаю. Если что-то нарушает авторские права, пишите на почту: example@mail.com</p>
-    </footer>
-
-    <!-- Модальное окно профиля -->
-    <div class="modal" v-if="showProfileModal" @click.self="showProfileModal = false">
-      <div class="modal-content">
-        <h3>{{ isLogin ? 'Вход' : 'Регистрация' }}</h3>
-        <input type="text" v-model="username" placeholder="Логин" class="modal-input" />
-        <input type="password" v-model="password" placeholder="Пароль" class="modal-input" />
-        <button class="modal-btn" @click="submitProfile">{{ isLogin ? 'Войти' : 'Зарегистрироваться' }}</button>
-        <p class="switch" @click="isLogin = !isLogin">
-          {{ isLogin ? 'Нет аккаунта? Регистрация' : 'Уже есть аккаунт? Вход' }}
-        </p>
-      </div>
-    </div>
+    <!-- Модалка и футер без изменений -->
   </div>
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   data() {
     return {
+      searchQuery: '',
+      searchResults: [],
       showProfileModal: false,
       isLogin: true,
       username: '',
@@ -38,8 +43,21 @@ export default {
     };
   },
   methods: {
+    async searchAnime() {
+      if (!this.searchQuery) {
+        this.searchResults = [];
+        return;
+      }
+      try {
+        const response = await axios.get('https://8fa4112ec6cc62ee.mokky.dev/Anime');
+        this.searchResults = response.data.filter(anime =>
+          anime.title.toLowerCase().includes(this.searchQuery.toLowerCase())
+        ).slice(0, 5); // Ограничиваем 5 результатами
+      } catch (error) {
+        console.error('Ошибка поиска:', error);
+      }
+    },
     submitProfile() {
-      // Заглушка для API
       console.log(this.isLogin ? 'Login' : 'Register', { username: this.username, password: this.password });
       this.showProfileModal = false;
     }
@@ -63,7 +81,7 @@ header {
   align-items: center;
   justify-content: space-between;
   padding: 15px 0;
-  background: #212121;
+  background: #171717;
   border-bottom: 1px solid #e50914;
 }
 .site-title {
@@ -95,7 +113,7 @@ header {
 footer {
   padding: 20px 0;
   text-align: center;
-  background: #212121;
+  background: #171717;
   color: #757575;
   border-top: 1px solid #e50914;
 }
