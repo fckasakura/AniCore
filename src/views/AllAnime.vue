@@ -2,24 +2,24 @@
     <div class="all-anime">
       <div class="filters-sidebar">
         <h3>Фильтры</h3>
-        <select v-model="selectedGenre">
+        <select v-model="selectedGenre" @change="fetchFilteredAnime">
           <option value="">Жанр</option>
           <option v-for="genre in genres" :key="genre" :value="genre">{{ genre }}</option>
         </select>
-        <select v-model="selectedYear">
+        <select v-model="selectedYear" @change="fetchFilteredAnime">
           <option value="">Год</option>
           <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
         </select>
-        <select v-model="selectedRating">
+        <select v-model="selectedRating" @change="fetchFilteredAnime">
           <option value="">Рейтинг</option>
           <option v-for="rating in ratings" :key="rating" :value="rating">{{ rating }}+</option>
         </select>
-        <select v-model="selectedStatus">
+        <select v-model="selectedStatus" @change="fetchFilteredAnime">
           <option value="">Статус</option>
           <option value="ongoing">Онгоинг</option>
           <option value="completed">Завершён</option>
         </select>
-        <button class="filter-btn">Применить</button>
+        <button class="filter-btn" @click="fetchFilteredAnime">Применить</button>
       </div>
       <div class="anime-grid">
         <AnimeCard v-for="anime in allAnime" :key="anime.id" :anime="anime" />
@@ -29,6 +29,7 @@
   
   <script>
   import AnimeCard from '@/components/AnimeCard.vue';
+  import axios from 'axios';
   
   export default {
     components: { AnimeCard },
@@ -38,15 +39,44 @@
         selectedYear: '',
         selectedRating: '',
         selectedStatus: '',
-        genres: ["Экшен", "Романтика", "Фэнтези", "Комедия", "Драма"],
-        years: [2025, 2024, 2023, 2022],
-        ratings: [9, 8, 7, 6],
-        allAnime: [
-          { id: 1, title: "Атака титанов", genres: ["Экшен", "Драма"], rating: 8.7, image: "https://cdn.myanimelist.net/images/anime/1208/94706.jpg" },
-          { id: 2, title: "Евангелион", genres: ["Меха", "Психология"], rating: 8.9, image: "https://cdn.myanimelist.net/images/anime/1223/96586.jpg" },
-          { id: 3, title: "Клинок", genres: ["Экшен", "Фэнтези"], rating: 8.5, image: "https://cdn.myanimelist.net/images/anime/1977/142649.jpg" }
-        ]
+        allAnime: [],
+        genres: [],
+        years: [],
+        ratings: []
       };
+    },
+    methods: {
+      async fetchAllAnime() {
+        try {
+          const response = await axios.get('https://8fa4112ec6cc62ee.mokky.dev/Anime');
+          this.allAnime = response.data;
+  
+          this.genres = [...new Set(this.allAnime.flatMap(a => a.genres))];
+          this.years = [...new Set(this.allAnime.map(a => a.year))].sort((a, b) => b - a);
+          this.ratings = [...new Set(this.allAnime.map(a => Math.floor(a.rating)))].sort((a, b) => b - a);
+        } catch (error) {
+          console.error('Ошибка загрузки аниме:', error);
+        }
+      },
+      async fetchFilteredAnime() {
+        try {
+          let url = 'https://8fa4112ec6cc62ee.mokky.dev/Anime';
+          const params = [];
+          if (this.selectedGenre) params.push(`genres=${this.selectedGenre}`);
+          if (this.selectedYear) params.push(`year=${this.selectedYear}`);
+          if (this.selectedRating) params.push(`rating_gte=${this.selectedRating}`);
+          if (this.selectedStatus) params.push(`status=${this.selectedStatus}`);
+          if (params.length) url += `?${params.join('&')}`;
+  
+          const response = await axios.get(url);
+          this.allAnime = response.data;
+        } catch (error) {
+          console.error('Ошибка фильтрации:', error);
+        }
+      }
+    },
+    mounted() {
+      this.fetchAllAnime();
     }
   };
   </script>

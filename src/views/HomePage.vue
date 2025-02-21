@@ -28,26 +28,25 @@
 
     <section class="popular">
       <h3>Популярное</h3>
-      <div class="popular-list">
-        <div 
-          class="popular-item" 
-          v-for="anime in paginatedPopular" 
-          :key="anime.id" 
-          @mouseover="hoveredAnime = anime.id" 
-          @mouseleave="hoveredAnime = null"
-        >
-          <img :src="anime.image" :alt="anime.title" loading="lazy" />
-          <div class="popular-info">
-            <h4>{{ anime.title }}</h4>
-            <p>{{ anime.genres.join(', ') }} • {{ anime.rating }}</p>
-            <div v-if="hoveredAnime === anime.id" class="short-desc">{{ anime.shortDescription }}</div>
+      <div class="popular-container">
+        <button class="pagination-btn prev" @click="prevPage('popular')" :disabled="popularPage === 1">←</button>
+        <div class="popular-list">
+          <div 
+            class="popular-item" 
+            v-for="anime in paginatedPopular" 
+            :key="anime.id" 
+            @mouseover="hoveredAnime = anime.id" 
+            @mouseleave="hoveredAnime = null"
+          >
+            <img :src="anime.image" :alt="anime.title" loading="lazy" />
+            <div class="popular-info">
+              <h4>{{ anime.title }}</h4>
+              <p>{{ anime.genres.join(', ') }} • {{ anime.rating }}</p>
+              <div v-if="hoveredAnime === anime.id" class="short-desc">{{ anime.shortDescription }}</div>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="pagination">
-        <button @click="prevPage('popular')" :disabled="popularPage === 1">Назад</button>
-        <span>{{ popularPage }} / {{ Math.ceil(popularAnime.length / itemsPerPage) }}</span>
-        <button @click="nextPage('popular')" :disabled="popularPage === Math.ceil(popularAnime.length / itemsPerPage)">Вперёд</button>
+        <button class="pagination-btn next" @click="nextPage('popular')" :disabled="popularPage === Math.ceil(popularAnime.length / itemsPerPage)">→</button>
       </div>
     </section>
 
@@ -89,7 +88,7 @@ export default {
       years: [],
       ratings: [],
       popularPage: 1,
-      itemsPerPage: 3,
+      itemsPerPage: 5, // Увеличил до 5 карточек для ширины
       hoveredAnime: null
     };
   },
@@ -105,7 +104,7 @@ export default {
       try {
         const response = await axios.get('https://8fa4112ec6cc62ee.mokky.dev/Anime');
         const animeList = response.data;
-        this.popularAnime = animeList.sort((a, b) => b.rating - a.rating).slice(0, 10);
+        this.popularAnime = animeList.sort((a, b) => b.rating - a.rating).slice(0, 15); // Больше данных для пагинации
         this.newAnime = animeList.filter(a => a.status === 'ongoing').slice(0, 5);
         this.trendingAnime = animeList.slice(0, 5);
 
@@ -213,16 +212,24 @@ export default {
   color: #e50914;
   font-size: 20px;
   margin-bottom: 15px;
+  text-align: center;
+}
+.popular-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 .popular-list {
   display: flex;
   gap: 10px;
-  overflow-x: auto;
+  width: 100%;
+  justify-content: space-between;
 }
 .popular-item {
   position: relative;
-  flex-shrink: 0;
-  width: 180px;
+  flex: 1;
+  max-width: 180px;
   background: #212121;
   border: 1px solid #424242;
   border-radius: 10px;
@@ -262,26 +269,31 @@ export default {
   color: #ffffff;
   border-radius: 10px 10px 0 0;
 }
-.pagination {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 10px;
-}
-.pagination button {
-  padding: 5px 10px;
+.pagination-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
   background: #e50914;
   color: #ffffff;
   border: none;
-  border-radius: 5px;
+  border-radius: 50%;
+  font-size: 18px;
   cursor: pointer;
   transition: background 0.3s;
 }
-.pagination button:disabled {
+.pagination-btn.prev {
+  left: -50px;
+}
+.pagination-btn.next {
+  right: -50px;
+}
+.pagination-btn:disabled {
   background: #424242;
   cursor: not-allowed;
 }
-.pagination button:hover:not(:disabled) {
+.pagination-btn:hover:not(:disabled) {
   background: #b2070f;
 }
 .anime-blocks {
@@ -328,8 +340,17 @@ export default {
   .block {
     width: 100%;
   }
+  .popular-list {
+    overflow-x: auto;
+  }
   .popular-item {
     width: 160px;
+  }
+  .pagination-btn.prev {
+    left: 0;
+  }
+  .pagination-btn.next {
+    right: 0;
   }
 }
 @media (max-width: 768px) {
