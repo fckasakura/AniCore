@@ -88,7 +88,7 @@ export default {
       years: [],
       ratings: [],
       popularPage: 1,
-      itemsPerPage: 5, // Увеличил до 5 карточек для ширины
+      itemsPerPage: 13, // Теперь 13 карточек на странице
       hoveredAnime: null
     };
   },
@@ -104,7 +104,7 @@ export default {
       try {
         const response = await axios.get('https://8fa4112ec6cc62ee.mokky.dev/Anime');
         const animeList = response.data;
-        this.popularAnime = animeList.sort((a, b) => b.rating - a.rating).slice(0, 15); // Больше данных для пагинации
+        this.popularAnime = animeList.sort((a, b) => b.rating - a.rating).slice(0, 26); // Больше данных для 2 страниц по 13
         this.newAnime = animeList.filter(a => a.status === 'ongoing').slice(0, 5);
         this.trendingAnime = animeList.slice(0, 5);
 
@@ -225,11 +225,13 @@ export default {
   gap: 10px;
   width: 100%;
   justify-content: space-between;
+  flex-wrap: wrap; /* Чтобы карточки не ломались, если не помещаются */
 }
 .popular-item {
   position: relative;
   flex: 1;
   max-width: 180px;
+  min-width: 140px; /* Минимальная ширина для адаптивности */
   background: #212121;
   border: 1px solid #424242;
   border-radius: 10px;
@@ -333,6 +335,11 @@ export default {
 }
 
 /* Адаптивность */
+@media (max-width: 1440px) {
+  .popular-item {
+    max-width: 160px;
+  }
+}
 @media (max-width: 1024px) {
   .anime-blocks {
     flex-direction: column;
@@ -344,7 +351,7 @@ export default {
     overflow-x: auto;
   }
   .popular-item {
-    width: 160px;
+    max-width: 140px;
   }
   .pagination-btn.prev {
     left: 0;
@@ -365,7 +372,7 @@ export default {
     font-size: 24px;
   }
   .popular-item {
-    width: 150px;
+    max-width: 120px;
   }
 }
 @media (max-width: 480px) {
@@ -380,7 +387,7 @@ export default {
     font-size: 18px;
   }
   .popular-item {
-    width: 120px;
+    max-width: 100px;
   }
   .popular-item img {
     height: 160px;
