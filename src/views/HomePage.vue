@@ -34,6 +34,7 @@
           <div class="popular-info">
             <h4>{{ anime.title }}</h4>
             <p>{{ anime.genres.join(', ') }} • {{ anime.rating }}</p>
+            <div v-if="hoveredAnime === anime.id" class="short-desc">{{ anime.shortDescription }}</div>
           </div>
         </div>
       </div>
@@ -65,6 +66,7 @@
 
 <script>
 import AnimeCard from '@/components/AnimeCard.vue';
+import axios from 'axios';
 
 export default {
   components: { AnimeCard },
@@ -74,20 +76,15 @@ export default {
       selectedYear: '',
       selectedRating: '',
       selectedStatus: '',
-      popularAnime: [
-        { id: 1, title: "Атака титанов", genres: ["Экшен", "Драма"], rating: 8.7, image: "https://cdn.myanimelist.net/images/anime/1208/94706.jpg" },
-        { id: 2, title: "Евангелион", genres: ["Меха", "Психология"], rating: 8.9, image: "https://cdn.myanimelist.net/images/anime/1223/96586.jpg" },
-        { id: 3, title: "Клинок", genres: ["Экшен", "Фэнтези"], rating: 8.5, image: "https://cdn.myanimelist.net/images/anime/1977/142649.jpg" },
-        { id: 4, title: "Наруто", genres: ["Экшен", "Приключения"], rating: 8.3, image: "https://cdn.myanimelist.net/images/anime/13/17405.jpg" },
-        { id: 5, title: "Ван Пис", genres: ["Приключения", "Комедия"], rating: 8.8, image: "https://cdn.myanimelist.net/images/anime/6/73245.jpg" }
-      ],
+      popularAnime: [],
       newAnime: [],
       trendingAnime: [],
-      genres: ["Экшен", "Романтика", "Фэнтези", "Комедия", "Драма"],
-      years: [2025, 2024, 2023, 2022],
-      ratings: [9, 8, 7, 6],
+      genres: [],
+      years: [],
+      ratings: [],
       popularPage: 1,
-      itemsPerPage: 3
+      itemsPerPage: 3,
+      hoveredAnime: null
     };
   },
   computed: {
@@ -98,14 +95,39 @@ export default {
     }
   },
   methods: {
-    fetchFilteredAnime() {
-      console.log('Filtering:', { genre: this.selectedGenre, year: this.selectedYear, rating: this.selectedRating, status: this.selectedStatus });
-      this.newAnime = this.popularAnime.filter(anime => 
-        (!this.selectedGenre || anime.genres.includes(this.selectedGenre)) &&
-        (!this.selectedYear || anime.year === this.selectedYear) &&
-        (!this.selectedRating || anime.rating >= this.selectedRating)
-      ).slice(0, 5);
-      this.trendingAnime = this.popularAnime.slice(0, 5);
+    async fetchAnimeData() {
+      try {
+        const response = await axios.get('https://<your-id>.mokky.dev/anime'); // Замени на свою ссылку
+        const animeList = response.data;
+        this.popularAnime = animeList.sort((a, b) => b.rating - a.rating).slice(0, 10);
+        this.newAnime = animeList.filter(a => a.status === 'ongoing').slice(0, 5);
+        this.trendingAnime = animeList.slice(0, 5);
+
+        // Собираем уникальные жанры, годы, рейтинги
+        this.genres = [...new Set(animeList.flatMap(a => a.genres))];
+        this.years = [...new Set(animeList.map(a => a.year))].sort((a, b) => b - a);
+        this.ratings = [...new Set(animeList.map(a => Math.floor(a.rating)))].sort((a, b) => b - a);
+      } catch (error) {
+        console.error('Ошибка загрузки аниме:', error);
+      }
+    },
+    async fetchFilteredAnime() {
+      try {
+        let url = 'https://<your-id>.mokky.dev/anime';
+        const params = [];
+        if (this.selectedGenre) params.push(`genres=${this.selectedGenre}`);
+        if (this.selectedYear) params.push(`year=${this.selectedYear}`);
+        if (this.selectedRating) params.push(`rating_gte=${this.selectedRating}`);
+        if (this.selectedStatus) params.push(`status=${this.selectedStatus}`);
+        if (params.length) url += `?${params.join('&')}`;
+
+        const response = await axios.get(url);
+        const animeList = response.data;
+        this.newAnime = animeList.slice(0, 5);
+        this.trendingAnime = animeList.slice(0, 5);
+      } catch (error) {
+        console.error('Ошибка фильтрации:', error);
+      }
     },
     prevPage(section) {
       if (section === 'popular' && this.popularPage > 1) this.popularPage--;
@@ -115,7 +137,7 @@ export default {
     }
   },
   mounted() {
-    this.fetchFilteredAnime();
+    this.fetchAnimeData();
   }
 };
 </script>
@@ -193,6 +215,7 @@ export default {
   overflow-x: auto;
 }
 .popular-item {
+  position: relative;
   flex-shrink: 0;
   width: 180px;
   background: #212121;
@@ -211,6 +234,7 @@ export default {
 }
 .popular-info {
   padding: 10px;
+  position: relative;
 }
 .popular-info h4 {
   margin: 0 0 5px;
@@ -221,6 +245,17 @@ export default {
   margin: 0;
   font-size: 12px;
   color: #757575;
+}
+.short-desc {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  width: 100%;
+  background: rgba(33, 33, 33, 0.9);
+  padding: 5px;
+  font-size: 12px;
+  color: #ffffff;
+  border-radius: 10px 10px 0 0;
 }
 .pagination {
   display: flex;
