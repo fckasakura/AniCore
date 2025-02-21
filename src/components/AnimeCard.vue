@@ -1,7 +1,7 @@
 <template>
-  <div class="card" @mouseover="showInfo = true" @mouseleave="showInfo = false">
+  <div class="card" @mouseover="showInfo = true" @mouseleave="showInfo = false" @click="$router.push(`/anime/${anime.id}`)">
     <img :src="anime.image" :alt="anime.title" loading="lazy" />
-    <span class="age">{{ anime.age || '16+' }}</span>
+    <span class="age">{{ anime.ageRestriction || '16+' }}</span>
     <span class="rating">{{ anime.rating }}</span>
     <p class="title">{{ anime.title }}</p>
     <div v-if="showInfo" class="info">
@@ -35,6 +35,7 @@ export default {
   border-radius: 10px;
   overflow: hidden;
   transition: transform 0.3s;
+  cursor: pointer;
 }
 .card:hover {
   transform: scale(1.03);
