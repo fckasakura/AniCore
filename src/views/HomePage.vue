@@ -59,7 +59,7 @@
       </div>
     </section>
 
-    <button class="all-anime-btn">Все аниме</button>
+    <button class="all-anime-btn" @click="$router.push('/all-anime')">Все аниме</button>
   </div>
 </template>
 
@@ -99,14 +99,13 @@ export default {
   },
   methods: {
     fetchFilteredAnime() {
-      // Заглушка для API, позже заменим на mocky.dev
       console.log('Filtering:', { genre: this.selectedGenre, year: this.selectedYear, rating: this.selectedRating, status: this.selectedStatus });
       this.newAnime = this.popularAnime.filter(anime => 
         (!this.selectedGenre || anime.genres.includes(this.selectedGenre)) &&
         (!this.selectedYear || anime.year === this.selectedYear) &&
         (!this.selectedRating || anime.rating >= this.selectedRating)
       ).slice(0, 5);
-      this.trendingAnime = this.popularAnime.slice(0, 5); // Пример
+      this.trendingAnime = this.popularAnime.slice(0, 5);
     },
     prevPage(section) {
       if (section === 'popular' && this.popularPage > 1) this.popularPage--;
@@ -116,7 +115,7 @@ export default {
     }
   },
   mounted() {
-    this.fetchFilteredAnime(); // Загружаем начальные данные
+    this.fetchFilteredAnime();
   }
 };
 </script>
