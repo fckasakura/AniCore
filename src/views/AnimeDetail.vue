@@ -26,7 +26,7 @@
         </div>
         <div class="player-section">
           <h3>Серии</h3>
-          <div class="episodes">
+          <div class="episodes-list">
             <button 
               v-for="ep in anime.episodesList" 
               :key="ep.episode" 
@@ -37,11 +37,10 @@
             </button>
           </div>
           <div class="player">
-            <video v-if="selectedEpisode" controls>
+            <video ref="videoPlayer" controls width="100%" height="400">
               <source :src="selectedEpisode" type="video/mp4">
               Ваш браузер не поддерживает видео.
             </video>
-            <p v-else>Выберите серию для просмотра</p>
           </div>
         </div>
       </div>
@@ -74,11 +73,23 @@
         }
       }
     },
+    watch: {
+      selectedEpisode(newVal) {
+        const video = this.$refs.videoPlayer;
+        if (video && newVal) {
+          video.src = newVal;
+          video.load();
+          video.play();
+        }
+      }
+    },
     mounted() {
       this.fetchAnime();
     }
   };
   </script>
+  
+
   
   <style scoped>
   .anime-detail {
@@ -141,13 +152,15 @@
     font-size: 20px;
     margin-bottom: 10px;
   }
-  .episodes {
+  .episodes-list {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     gap: 10px;
     margin-bottom: 20px;
+    max-height: 300px;
+    overflow-y: auto;
   }
-  .episodes button {
+  .episodes-list button {
     padding: 8px 15px;
     background: #2c2c2c;
     color: #ffffff;
@@ -155,8 +168,9 @@
     border-radius: 10px;
     cursor: pointer;
     transition: background 0.3s;
+    text-align: left;
   }
-  .episodes button.active, .episodes button:hover {
+  .episodes-list button.active, .episodes-list button:hover {
     background: #e50914;
   }
   .player video {
@@ -185,7 +199,7 @@
     .info p {
       font-size: 14px;
     }
-    .episodes button {
+    .episodes-list button {
       padding: 6px 10px;
       font-size: 12px;
     }

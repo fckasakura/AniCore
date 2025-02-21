@@ -52,9 +52,9 @@
           const response = await axios.get('https://8fa4112ec6cc62ee.mokky.dev/Anime');
           this.allAnime = response.data;
           this.filteredAnime = [...this.allAnime];
-          this.genres = [...new Set(this.allAnime.flatMap(a => a.genres))];
-          this.years = [...new Set(this.allAnime.map(a => new Date(a.releaseDate).getFullYear()))].sort((a, b) => b - a);
-          this.ratings = [...new Set(this.allAnime.map(a => Math.floor(a.rating)))].sort((a, b) => b - a);
+          this.genres = [...new Set(this.allAnime.flatMap(a => a.genres || []))];
+          this.years = [...new Set(this.allAnime.map(a => a.releaseDate ? new Date(a.releaseDate).getFullYear() : null))].filter(Boolean).sort((a, b) => b - a);
+          this.ratings = [...new Set(this.allAnime.map(a => a.rating ? Math.floor(a.rating) : null))].filter(Boolean).sort((a, b) => b - a);
         } catch (error) {
           console.error('Ошибка загрузки аниме:', error);
         }
