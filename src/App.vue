@@ -20,6 +20,7 @@
   background: #171717;
   color: #ffffff;
   min-height: 100vh;
+  padding: 0 20px;
 }
 body {
   margin: 0;
@@ -28,7 +29,7 @@ header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 15px 20px;
+  padding: 15px 0;
   background: #212121;
   border-bottom: 1px solid #e50914;
 }
@@ -59,18 +60,19 @@ header {
   color: #ffffff;
 }
 footer {
-  padding: 20px;
+  padding: 20px 0;
   text-align: center;
   background: #212121;
   color: #757575;
   border-top: 1px solid #e50914;
 }
-
-/* Адаптивность */
 @media (max-width: 768px) {
+  #app {
+    padding: 0 10px;
+  }
   header {
     flex-direction: column;
-    padding: 10px;
+    padding: 10px 0;
   }
   .search-bar {
     width: 100%;
@@ -78,6 +80,9 @@ footer {
   }
 }
 @media (max-width: 480px) {
+  #app {
+    padding: 0 5px;
+  }
   .site-title {
     font-size: 20px;
   }
