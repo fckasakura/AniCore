@@ -29,7 +29,13 @@
     <section class="popular">
       <h3>Популярное</h3>
       <div class="popular-list">
-        <div class="popular-item" v-for="anime in paginatedPopular" :key="anime.id">
+        <div 
+          class="popular-item" 
+          v-for="anime in paginatedPopular" 
+          :key="anime.id" 
+          @mouseover="hoveredAnime = anime.id" 
+          @mouseleave="hoveredAnime = null"
+        >
           <img :src="anime.image" :alt="anime.title" loading="lazy" />
           <div class="popular-info">
             <h4>{{ anime.title }}</h4>
@@ -97,13 +103,12 @@ export default {
   methods: {
     async fetchAnimeData() {
       try {
-        const response = await axios.get('https://<your-id>.mokky.dev/anime'); // Замени на свою ссылку
+        const response = await axios.get('https://8fa4112ec6cc62ee.mokky.dev/Anime');
         const animeList = response.data;
         this.popularAnime = animeList.sort((a, b) => b.rating - a.rating).slice(0, 10);
         this.newAnime = animeList.filter(a => a.status === 'ongoing').slice(0, 5);
         this.trendingAnime = animeList.slice(0, 5);
 
-        // Собираем уникальные жанры, годы, рейтинги
         this.genres = [...new Set(animeList.flatMap(a => a.genres))];
         this.years = [...new Set(animeList.map(a => a.year))].sort((a, b) => b - a);
         this.ratings = [...new Set(animeList.map(a => Math.floor(a.rating)))].sort((a, b) => b - a);
@@ -113,7 +118,7 @@ export default {
     },
     async fetchFilteredAnime() {
       try {
-        let url = 'https://<your-id>.mokky.dev/anime';
+        let url = 'https://8fa4112ec6cc62ee.mokky.dev/Anime';
         const params = [];
         if (this.selectedGenre) params.push(`genres=${this.selectedGenre}`);
         if (this.selectedYear) params.push(`year=${this.selectedYear}`);
