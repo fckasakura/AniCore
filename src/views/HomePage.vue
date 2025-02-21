@@ -5,27 +5,6 @@
       <h2>Весенний сезон аниме 2025</h2>
     </section>
 
-    <section class="filters">
-      <select v-model="selectedGenre" @change="fetchFilteredAnime">
-        <option value="">Жанр</option>
-        <option v-for="genre in genres" :key="genre" :value="genre">{{ genre }}</option>
-      </select>
-      <select v-model="selectedYear" @change="fetchFilteredAnime">
-        <option value="">Год</option>
-        <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
-      </select>
-      <select v-model="selectedRating" @change="fetchFilteredAnime">
-        <option value="">Рейтинг</option>
-        <option v-for="rating in ratings" :key="rating" :value="rating">{{ rating }}+</option>
-      </select>
-      <select v-model="selectedStatus" @change="fetchFilteredAnime">
-        <option value="">Статус</option>
-        <option value="ongoing">Онгоинг</option>
-        <option value="completed">Завершён</option>
-      </select>
-      <button class="filter-btn" @click="fetchFilteredAnime">Фильтр</button>
-    </section>
-
     <section class="popular">
       <h3>Популярное</h3>
       <div class="popular-container">
@@ -37,16 +16,17 @@
             :key="anime.id" 
             @mouseover="hoveredAnime = anime.id" 
             @mouseleave="hoveredAnime = null"
+            @click="$router.push(`/anime/${anime.id}`)"
           >
             <img :src="anime.image" :alt="anime.title" loading="lazy" />
             <div class="popular-info">
               <h4>{{ anime.title }}</h4>
-              <p>{{ anime.genres.join(', ') }} • {{ anime.rating }}</p>
+              <p>{{ anime.genres ? anime.genres.join(', ') : 'N/A' }} • {{ anime.rating }}</p>
               <div v-if="hoveredAnime === anime.id" class="short-desc">{{ anime.shortDescription }}</div>
             </div>
           </div>
         </div>
-        <button class="pagination-btn next" @click="nextPage('popular')" :disabled="popularPage === Math.ceil(popularAnime.length / itemsPerPage)">→</button>
+        <button class="pagination-btn next" @click="nextPage('popular')" :disabled="popularPage === Math.ceil(filteredAnime.length / itemsPerPage)">→</button>
       </div>
     </section>
 
@@ -70,25 +50,19 @@
 </template>
 
 <script>
-import AnimeCard from '@/components/AnimeCard.vue';
 import axios from 'axios';
+import AnimeCard from '@/components/AnimeCard.vue';
 
 export default {
   components: { AnimeCard },
   data() {
     return {
-      selectedGenre: '',
-      selectedYear: '',
-      selectedRating: '',
-      selectedStatus: '',
-      popularAnime: [],
+      allAnime: [],
+      filteredAnime: [],
       newAnime: [],
       trendingAnime: [],
-      genres: [],
-      years: [],
-      ratings: [],
       popularPage: 1,
-      itemsPerPage: 13, // Теперь 13 карточек на странице
+      itemsPerPage: 13,
       hoveredAnime: null
     };
   },
@@ -96,48 +70,26 @@ export default {
     paginatedPopular() {
       const start = (this.popularPage - 1) * this.itemsPerPage;
       const end = start + this.itemsPerPage;
-      return this.popularAnime.slice(start, end);
+      return this.filteredAnime.slice(start, end);
     }
   },
   methods: {
     async fetchAnimeData() {
       try {
         const response = await axios.get('https://8fa4112ec6cc62ee.mokky.dev/Anime');
-        const animeList = response.data;
-        this.popularAnime = animeList.sort((a, b) => b.rating - a.rating).slice(0, 26); // Больше данных для 2 страниц по 13
-        this.newAnime = animeList.filter(a => a.status === 'ongoing').slice(0, 5);
-        this.trendingAnime = animeList.slice(0, 5);
-
-        this.genres = [...new Set(animeList.flatMap(a => a.genres))];
-        this.years = [...new Set(animeList.map(a => a.year))].sort((a, b) => b - a);
-        this.ratings = [...new Set(animeList.map(a => Math.floor(a.rating)))].sort((a, b) => b - a);
+        this.allAnime = response.data;
+        this.filteredAnime = [...this.allAnime];
+        this.newAnime = this.allAnime.filter(a => a.status === 'ongoing').slice(0, 5);
+        this.trendingAnime = this.allAnime.sort((a, b) => b.rating - a.rating).slice(0, 5);
       } catch (error) {
         console.error('Ошибка загрузки аниме:', error);
       }
     },
-    async fetchFilteredAnime() {
-      try {
-        let url = 'https://8fa4112ec6cc62ee.mokky.dev/Anime';
-        const params = [];
-        if (this.selectedGenre) params.push(`genres=${this.selectedGenre}`);
-        if (this.selectedYear) params.push(`year=${this.selectedYear}`);
-        if (this.selectedRating) params.push(`rating_gte=${this.selectedRating}`);
-        if (this.selectedStatus) params.push(`status=${this.selectedStatus}`);
-        if (params.length) url += `?${params.join('&')}`;
-
-        const response = await axios.get(url);
-        const animeList = response.data;
-        this.newAnime = animeList.slice(0, 5);
-        this.trendingAnime = animeList.slice(0, 5);
-      } catch (error) {
-        console.error('Ошибка фильтрации:', error);
-      }
+    prevPage() {
+      if (this.popularPage > 1) this.popularPage--;
     },
-    prevPage(section) {
-      if (section === 'popular' && this.popularPage > 1) this.popularPage--;
-    },
-    nextPage(section) {
-      if (section === 'popular' && this.popularPage < Math.ceil(this.popularAnime.length / this.itemsPerPage)) this.popularPage++;
+    nextPage() {
+      if (this.popularPage < Math.ceil(this.filteredAnime.length / this.itemsPerPage)) this.popularPage++;
     }
   },
   mounted() {
@@ -225,18 +177,19 @@ export default {
   gap: 10px;
   width: 100%;
   justify-content: space-between;
-  flex-wrap: wrap; /* Чтобы карточки не ломались, если не помещаются */
+  flex-wrap: wrap;
 }
 .popular-item {
   position: relative;
   flex: 1;
   max-width: 180px;
-  min-width: 140px; /* Минимальная ширина для адаптивности */
+  min-width: 140px;
   background: #212121;
   border: 1px solid #424242;
   border-radius: 10px;
   overflow: hidden;
   transition: transform 0.3s;
+  cursor: pointer;
 }
 .popular-item:hover {
   transform: translateY(-5px);

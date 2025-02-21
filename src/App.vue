@@ -2,29 +2,46 @@
   <div id="app">
     <header>
       <h1 class="site-title" @click="$router.push('/')">AniCore</h1>
-      <input 
-        type="text" 
-        v-model="searchQuery" 
-        @input="searchAnime" 
-        placeholder="Поиск..." 
-        class="search-bar" 
-      />
-      <div class="profile-icon" @click="showProfileModal = true">👤</div>
-      <div class="search-results" v-if="searchResults.length">
-        <div 
-          v-for="anime in searchResults" 
-          :key="anime.id" 
-          @click="$router.push(`/anime/${anime.id}`)" 
-          class="search-item"
-        >
-          {{ anime.title }}
+      <div class="search-container">
+        <input 
+          type="text" 
+          v-model="searchQuery" 
+          @input="searchAnime" 
+          placeholder="Поиск..." 
+          class="search-bar" 
+        />
+        <div class="search-results" v-if="searchResults.length">
+          <div 
+            v-for="anime in searchResults" 
+            :key="anime.id" 
+            @click="goToAnime(anime.id)" 
+            class="search-item"
+          >
+            <img :src="anime.image" :alt="anime.title" class="search-image" />
+            <span class="search-title">{{ anime.title }}</span>
+          </div>
         </div>
       </div>
+      <div class="profile-icon" @click="showProfileModal = true">👤</div>
     </header>
     <main>
       <router-view />
     </main>
-    <!-- Модалка и футер без изменений -->
+    <footer>
+      <p>Сайт создан как дипломный проект. Никаких денег я не получаю. Если что-то нарушает авторские права, пишите на почту: example@mail.com</p>
+    </footer>
+
+    <div class="modal" v-if="showProfileModal" @click.self="showProfileModal = false">
+      <div class="modal-content">
+        <h3>{{ isLogin ? 'Вход' : 'Регистрация' }}</h3>
+        <input type="text" v-model="username" placeholder="Логин" class="modal-input" />
+        <input type="password" v-model="password" placeholder="Пароль" class="modal-input" />
+        <button class="modal-btn" @click="submitProfile">{{ isLogin ? 'Войти' : 'Зарегистрироваться' }}</button>
+        <p class="switch" @click="isLogin = !isLogin">
+          {{ isLogin ? 'Нет аккаунта? Регистрация' : 'Уже есть аккаунт? Вход' }}
+        </p>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -52,10 +69,15 @@ export default {
         const response = await axios.get('https://8fa4112ec6cc62ee.mokky.dev/Anime');
         this.searchResults = response.data.filter(anime =>
           anime.title.toLowerCase().includes(this.searchQuery.toLowerCase())
-        ).slice(0, 5); // Ограничиваем 5 результатами
+        ).slice(0, 5);
       } catch (error) {
         console.error('Ошибка поиска:', error);
       }
+    },
+    goToAnime(id) {
+      this.$router.push(`/anime/${id}`);
+      this.searchQuery = ''; // Очищаем поиск
+      this.searchResults = []; // Убираем результаты
     },
     submitProfile() {
       console.log(this.isLogin ? 'Login' : 'Register', { username: this.username, password: this.password });
@@ -66,32 +88,40 @@ export default {
 </script>
 
 <style>
+/* Убираем отступы */
+body {
+  margin: 0;
+}
 #app {
   font-family: 'Montserrat', sans-serif;
   background: #171717;
   color: #ffffff;
   min-height: 100vh;
-  padding: 0 20px;
-}
-body {
-  margin: 0;
+  padding: 0; /* Убрали padding */
 }
 header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 15px 0;
-  background: #171717;
+  padding: 15px; /* Отступы внутри хедера */
+  background: #212121;
   border-bottom: 1px solid #e50914;
+  position: relative;
 }
 .site-title {
   font-size: 24px;
   color: #e50914;
   margin: 0;
+  cursor: pointer;
+}
+.search-container {
+  position: relative;
+  flex: 1;
+  max-width: 300px;
 }
 .search-bar {
+  width: 100%;
   padding: 8px 15px;
-  width: 300px;
   border: 1px solid #424242;
   border-radius: 20px;
   background: #2c2c2c;
@@ -100,6 +130,41 @@ header {
 }
 .search-bar::placeholder {
   color: #757575;
+}
+.search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: #212121;
+  border: 1px solid #424242;
+  border-radius: 10px;
+  margin-top: 5px;
+  z-index: 1000;
+}
+.search-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #424242;
+}
+.search-item:last-child {
+  border-bottom: none;
+}
+.search-item:hover {
+  background: #e50914;
+}
+.search-image {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+  object-fit: cover;
+}
+.search-title {
+  font-size: 14px;
+  color: #ffffff;
 }
 .profile-icon {
   font-size: 24px;
@@ -110,10 +175,13 @@ header {
 .profile-icon:hover {
   color: #ffffff;
 }
+main {
+  padding: 0; /* Убираем отступы в main */
+}
 footer {
-  padding: 20px 0;
+  padding: 20px;
   text-align: center;
-  background: #171717;
+  background: #212121;
   color: #757575;
   border-top: 1px solid #e50914;
 }
@@ -174,14 +242,11 @@ footer {
 
 /* Адаптивность */
 @media (max-width: 768px) {
-  #app {
-    padding: 0 10px;
-  }
   header {
     flex-direction: column;
-    padding: 10px 0;
+    padding: 10px;
   }
-  .search-bar {
+  .search-container {
     width: 100%;
     margin: 10px 0;
   }
@@ -190,9 +255,6 @@ footer {
   }
 }
 @media (max-width: 480px) {
-  #app {
-    padding: 0 5px;
-  }
   .site-title {
     font-size: 20px;
   }

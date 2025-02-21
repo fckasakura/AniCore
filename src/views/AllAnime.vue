@@ -1,35 +1,35 @@
 <template>
     <div class="all-anime">
-      <div class="filters-sidebar">
+      <section class="filters">
         <h3>Фильтры</h3>
-        <select v-model="selectedGenre" @change="fetchFilteredAnime">
+        <select v-model="selectedGenre">
           <option value="">Жанр</option>
           <option v-for="genre in genres" :key="genre" :value="genre">{{ genre }}</option>
         </select>
-        <select v-model="selectedYear" @change="fetchFilteredAnime">
+        <select v-model="selectedYear">
           <option value="">Год</option>
           <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
         </select>
-        <select v-model="selectedRating" @change="fetchFilteredAnime">
+        <select v-model="selectedRating">
           <option value="">Рейтинг</option>
           <option v-for="rating in ratings" :key="rating" :value="rating">{{ rating }}+</option>
         </select>
-        <select v-model="selectedStatus" @change="fetchFilteredAnime">
+        <select v-model="selectedStatus">
           <option value="">Статус</option>
           <option value="ongoing">Онгоинг</option>
           <option value="completed">Завершён</option>
         </select>
-        <button class="filter-btn" @click="fetchFilteredAnime">Применить</button>
-      </div>
+        <button class="filter-btn" @click="applyFilters">Фильтр</button>
+      </section>
       <div class="anime-grid">
-        <AnimeCard v-for="anime in allAnime" :key="anime.id" :anime="anime" />
+        <AnimeCard v-for="anime in filteredAnime" :key="anime.id" :anime="anime" />
       </div>
     </div>
   </template>
   
   <script>
-  import AnimeCard from '@/components/AnimeCard.vue';
   import axios from 'axios';
+  import AnimeCard from '@/components/AnimeCard.vue';
   
   export default {
     components: { AnimeCard },
@@ -40,6 +40,7 @@
         selectedRating: '',
         selectedStatus: '',
         allAnime: [],
+        filteredAnime: [],
         genres: [],
         years: [],
         ratings: []
@@ -50,29 +51,23 @@
         try {
           const response = await axios.get('https://8fa4112ec6cc62ee.mokky.dev/Anime');
           this.allAnime = response.data;
-  
+          this.filteredAnime = [...this.allAnime];
           this.genres = [...new Set(this.allAnime.flatMap(a => a.genres))];
-          this.years = [...new Set(this.allAnime.map(a => a.year))].sort((a, b) => b - a);
+          this.years = [...new Set(this.allAnime.map(a => new Date(a.releaseDate).getFullYear()))].sort((a, b) => b - a);
           this.ratings = [...new Set(this.allAnime.map(a => Math.floor(a.rating)))].sort((a, b) => b - a);
         } catch (error) {
           console.error('Ошибка загрузки аниме:', error);
         }
       },
-      async fetchFilteredAnime() {
-        try {
-          let url = 'https://8fa4112ec6cc62ee.mokky.dev/Anime';
-          const params = [];
-          if (this.selectedGenre) params.push(`genres=${this.selectedGenre}`);
-          if (this.selectedYear) params.push(`year=${this.selectedYear}`);
-          if (this.selectedRating) params.push(`rating_gte=${this.selectedRating}`);
-          if (this.selectedStatus) params.push(`status=${this.selectedStatus}`);
-          if (params.length) url += `?${params.join('&')}`;
-  
-          const response = await axios.get(url);
-          this.allAnime = response.data;
-        } catch (error) {
-          console.error('Ошибка фильтрации:', error);
-        }
+      applyFilters() {
+        this.filteredAnime = this.allAnime.filter(anime => {
+          return (
+            (!this.selectedGenre || (anime.genres && anime.genres.includes(this.selectedGenre))) &&
+            (!this.selectedYear || (anime.releaseDate && new Date(anime.releaseDate).getFullYear() === Number(this.selectedYear))) &&
+            (!this.selectedRating || (anime.rating && anime.rating >= Number(this.selectedRating))) &&
+            (!this.selectedStatus || (anime.status && anime.status === this.selectedStatus))
+          );
+        });
       }
     },
     mounted() {
@@ -84,25 +79,26 @@
   <style scoped>
   .all-anime {
     display: flex;
+    flex-direction: column;
     gap: 20px;
-    padding: 20px 0;
+    padding: 20px;
     background: #171717;
   }
-  .filters-sidebar {
-    width: 200px;
+  .filters {
     background: #212121;
     padding: 15px;
     border: 1px solid #424242;
     border-radius: 10px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
   }
-  .filters-sidebar h3 {
+  .filters h3 {
     color: #e50914;
     font-size: 18px;
-    margin-bottom: 15px;
+    margin: 0 10px 0 0;
   }
-  .filters-sidebar select, .filters-sidebar button {
-    width: 100%;
-    margin-bottom: 10px;
+  .filters select, .filters button {
     padding: 8px;
     border: 1px solid #424242;
     border-radius: 10px;
@@ -119,7 +115,6 @@
     background: #b2070f;
   }
   .anime-grid {
-    flex: 1;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 10px;
@@ -127,10 +122,10 @@
   
   /* Адаптивность */
   @media (max-width: 768px) {
-    .all-anime {
+    .filters {
       flex-direction: column;
     }
-    .filters-sidebar {
+    .filters select, .filters button {
       width: 100%;
     }
     .anime-grid {
